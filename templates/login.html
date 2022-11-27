@@ -1,27 +1,153 @@
+<!--
+    Last modified: 2022-06-25 18:40:11
+    Url: https://www.axui.cn
+-->
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>页面标题</title>
-    <meta name="keywords" content="页面关键字" />
-    <meta name="description" content="页面描述" />
-    <link href="/static/css/ax.css" rel="stylesheet" type="text/css" >
-    <link href="/static/css/ax-response.css" rel="stylesheet" type="text/css" >
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="apple-touch-fullscreen" content="yes"/>
+    <meta name="format-detection" content="email=no"/>
+    <meta name="wap-font-scale" content="no"/>
+    <meta name="viewport" content="user-scalable=no, width=device-width"/>
+    <meta content="telephone=no" name="format-detection"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <title>人才招聘系统 - 登录/注册</title>
+    <meta name="description"
+          content="，AXUI前端框架是面向设计，满足设计多样化需求的前端解决方案，减少或剔除JS文件资源和API。AXUI前端框架原则是能用css写的不用js；能用js写的不用插件；能用插件的不重复引用插件。核心文件只有ax.css和ax.js，加载速度飞快。">
+    <meta name="keywords" content=",前端框架,UI,CSS3,HTML5,原生JS,面向设计,前端工程师">
+
+    <link href="/static/css/ax.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/ax-response.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/main.css" rel="stylesheet" type="text/css">
+
+    <style>
+        .custom-main {
+            position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%,-50%);
+				/* transform: translateX(-50%);
+				transform: translateY(-50%); */
+				width: 300px;
+				height: 300px;
+        }
+
+
+    </style>
 </head>
+
 <body>
-<div class="ax-form-group">
-<div class="ax-flex-row">
-<div class="ax-form-label">名称</div>
-<div class="ax-form-con">
-<div class="ax-form-input"><input type="text"></div>
+<div class="custom-main">
+<form action="/login" method="POST">
+
+    <div class="ax-break"></div>
+    <div class="ax-break ax-hide-tel"></div>
+
+    <div class="ax-form-group">
+        <div class="ax-flex-row">
+            <div class="ax-form-con">
+                <div class="ax-form-input"><span class="ax-pos-left" style="width: 2.4rem;"><i
+                        class="ax-iconfont ax-icon-me-f"></i></span><input name="username"
+                                                                           placeholder="输入用户名"
+                                                                           type="text"><span
+                        class="ax-pos-right"><a href="###"
+                                                class="ax-iconfont ax-icon-close ax-val-none"></a></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ax-break-md"></div>
+
+    <div class="ax-form-group">
+        <div class="ax-flex-row">
+            <div class="ax-form-con">
+                <div class="ax-form-input"><span class="ax-pos-left"
+                                                 style="width:2.4rem;"><i
+                        class="ax-iconfont ax-icon-lock-f"></i></span>
+                    <input name="password" placeholder="输入密码" type="password"><span
+                            class="ax-pos-right"><a href="###"
+                                                    class="ax-iconfont ax-icon-close ax-val-none"></a></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ax-break-md"></div>
+
+    {#                                    <div class="ax-form-group">#}
+    {#                                        <div class="ax-flex-row">#}
+    {#                                            <div class="ax-form-con">#}
+    {#                                                <div class="ax-form-input">#}
+    {#                                                    <div class="ax-row">#}
+    {#                                                        <div class="ax-flex-block">#}
+    {#                                                            <span class="ax-pos-left" style="width:2.4rem;"><i class="ax-iconfont ax-icon-shield-f"></i></span>#}
+    {#                                                            <input name="username" placeholder="输入验证码..." value="" type="text"><span class="ax-pos-right"><a href="###" class="ax-iconfont ax-icon-close ax-val-none"></a></span>#}
+    {#                                                        </div>#}
+    {#                                                        <a href="###" class="ax-form-img"><img src="https://www.axui.cn/v1.0/examples/images/yanzhengma.jpg"></a>#}
+    {#                                                    </div>#}
+    {#                                                </div>#}
+    {##}
+    {#                                            </div>#}
+    {#                                        </div>#}
+    {#                                    </div>#}
+
+
+    <div class="ax-break-md"></div>
+
+    <div class="ax-form-group">
+        <div class="ax-flex-row">
+            <div class="ax-form-con">
+                <div class="ax-form-input">
+                    <div class="ax-row">
+                        <div class="ax-flex-block">
+                            <label class="ax-checkbox"><input name="free-agree" value="0"
+                                                              checked=""
+                                                              type="checkbox"><span>记住密码</span></label>
+                        </div>
+                        {#                                                        <a href="###" class="ax-form-txt ax-color-ignore">忘记了密码？</a>#}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ax-break-md"></div>
+
+    <div class="ax-form-group">
+        <div class="ax-flex-row">
+            <div class="ax-flex-block">
+                <div class="ax-form-input">
+                    <button type="submit" class="ax-btn ax-primary ax-full">登录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ax-break"></div>
+    <div class="ax-break ax-hide-tel"></div>
+    <div class="ax-break ax-hide-tel"></div>
+
+</form>
 </div>
-</div>
-</div>
-<script src="/static/js/ax.min.js" type="text/javascript" charset="utf-8"></script>
-<script type='text/javascript'>
-    document.addEventListener("DOMContentLoaded", function () {
-    //js内容
-    });
+<!--正文结束-->
+
+<script src="/static/js/ax.min.js" type="text/javascript"></script>
+<script>
+    {% if msg %}
+        document.addEventListener("DOMContentLoaded", function () {
+            new axMessage({
+                content: "{{ msg }}",
+            });
+        });
+    {% endif %}
 </script>
 </body>
+
 </html>
