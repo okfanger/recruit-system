@@ -9,7 +9,8 @@ body {
   width: 100%;
 }
 body {
-  background-image: url(../images/login-bg.jpg);
+  /*background-image: url(../images/login-bg.jpg);*/
+  background-color: rgb(240, 242, 245);
   background-repeat: no-repeat;
   background-size: cover;
 }

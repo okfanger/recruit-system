@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+        <link href="/static/css/ax.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/ax-response.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+
+<div class="ax-flex-row ax-split">
+    <div class="ax-flex-block-1"><section class="demo-section-border"></section></div>
+    <div class="ax-flex-block-5"><section class="demo-section-border">
+        <div class="ax-padding">
+
+
+<ul class="ax-grid ax-grid-3 ax-space-xxl">
+
+    {% for item in jobs %}
+    <li>
+        <div class="ax-card-block ax-padding-lr">
+                    <div class="ax-title">
+                        <a href="###" class="ax-ell-title">{{  item["name"] }} </a>
+                    </div>
+                    <div class="ax-des">
+                        {{ item["desc"] }}
+                    </div>
+<div class="ax-operate">
+                        <div class="ax-row">
+                            <div class="ax-col ax-col-16 ax-align-left">{{ item["city"] }}, {{ item["salary_low"] }}-{{ item["salary_high"] }}</div>
+                            <span class="ax-gutter-line"></span>
+                            <a href="###" class="ax-col ax-col-8"><i class="ax-color-primary">立即购买</i></a>
+                        </div>
+                    </div>
+
+                </div>
+
+    </li>
+    {% endfor %}
+</ul>
+</div>
+
+    </section></div>
+    <div class="ax-flex-block-1"><section class="demo-section-border"></section></div>
+</div>
+
+
+<script src="/static/js/ax.min.js" type="text/javascript"></script>
+
+</body>
+</html>

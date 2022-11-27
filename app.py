@@ -9,7 +9,6 @@ app.secret_key = os.urandom(24)
 DB = MysqlPool()
 
 
-# 中间件
 @app.before_request
 def before():
     url = request.path  # 当前请求的URL
@@ -19,21 +18,11 @@ def before():
     if url in white_urls:
         pass
     else:
-        _id = session.get("_id", None)
-        if not _id:
+        login_status = session.get("login_status", False)
+        if not login_status:
             return redirect(url_for('login_html'))
         else:
             pass
-
-
-@app.route('/')
-def index_html():  # put application's code here
-    return redirect(url_for('index'))
-
-
-@app.route('/hr/index')
-def hr_index():
-    return render_template("hr/index.html")
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -51,17 +40,47 @@ def login_html():
                     "msg": "用户名或密码错误"
                 })
             else:
-                return redirect(url_for('login_html'))
+                session["login_status"] = True
+                session["login_role"] = "hr"
+                return redirect(url_for('hr_index'))
+        else:
+            session["login_status"] = True
+            session["login_role"] = "person"
+            return redirect(url_for("person_index"))
 
-        return "123"
 
-
-def index_html():
-    pass
-
-
+@app.route('/register')
 def register_html():
     return render_template("register.html")
+
+
+@app.route('/logout')
+def logout():
+    session.pop("login_status")
+    session.pop("login_role")
+    return redirect(url_for("index_html"))
+
+
+@app.route('/')
+def index_html():
+    login_role = session.get("login_role", None)
+    if login_role == "hr":
+        return redirect(url_for('hr_index'))
+    else:
+        return redirect(url_for('person_index'))
+
+
+@app.route('/hr/index')
+def hr_index():
+    return render_template("hr/index.html")
+
+
+@app.route('/person/index')
+def person_index():
+    jobs = DB.fetch_all("select * from job", None)
+    return render_template("person/index.html", **{
+        "jobs": jobs
+    })
 
 
 if __name__ == '__main__':
