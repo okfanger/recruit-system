@@ -11,28 +11,17 @@ id,name,desc,city,salary_low,salary_high,is_done,degree,experience
 id,person_id,job_id
 
 # model bio
-id,person_id,url
+id,job_id,person_id,url
 
 
 gender { 女, 男 }
 
 degree {
-0不限
-1初中及以下
-2中专
-3高中
-4大专
-5本科
-6硕士研究生
-7博士研究生
+不限, 初中及以下, 中专, 高中, 大专, 本科, 硕士研究生, 博士研究生
 }
 
-expr {
-0    不限
-1    在校生
-2    应届生
-3    1年以内
-4    1-3年
-5    3-5年
-6    5-10年
+expr {'不限','在校生','应届生','1年以内','1-3年','3-5年','5-10年'}
+
+salary {
+
 }

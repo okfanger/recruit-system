@@ -1,10 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <span>这个是问我引入的组件</span>
-</body>
-</html>
+{% set uri = request.url_rule %}
+{% set login_role = session.get("login_role") %}
+{% if login_role == 'person' %}
+{% set routes = [
+    {'name': '岗位圈', 'path': '/person/index'},
+    {'name': '收藏夹', 'path': '/person/star'},
+] %}
+<div class="ax-tab" axTab>
+    <div class="ax-tab-nav ax-menu-tab">
+
+    {% for route in routes %}
+        <a href="{{ route['path'] }}" class="ax-item {{ route['path'] | route_active_cut }}"><span class="tab_title">{{ route['name'] }}</span></a>
+    {% endfor %}
+        </div>
+
+</div>
+{% endif %}
+
+{% if login_role == 'hr' %}
+
+{% endif %}

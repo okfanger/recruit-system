@@ -50,11 +50,13 @@ create table if not exists `star`
 `job_id` int not null comment '岗位ID'
 ) comment '岗位收藏夹表';
 
--- bio表
-create table if not exists `bio`
+-- bio_record 表
+create table if not exists `bio_record`
 (
-`id` int not null auto_increment comment 'id' primary key,
-`person_id` int not null comment '用户ID',
-`url` varchar(1024) not null comment '简历pdf地址'
+    `id` int not null auto_increment comment 'id' primary key,
+    `person_id` int not null comment '用户ID',
+    `url` varchar(1024) not null comment '简历pdf地址',
+    `job_id` int not null comment '岗位ID',
+    `create_time` datetime not null comment '创建时间' default CURRENT_TIMESTAMP,
+    `update_time` datetime not null comment '更新时间' default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
 )
-

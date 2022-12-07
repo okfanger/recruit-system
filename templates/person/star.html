@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/static/css/ax.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/ax-response.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+
+{% include 'components/nav.html' %}
+<div class="ax-flex-row ax-split">
+    <div class="ax-flex-block-1">
+        <section class="demo-section-border"></section>
+    </div>
+
+    <div class="ax-flex-block-5">
+<table class="ax-table" hover>
+    <thead>
+        <tr>
+            <th>序号</th>
+            <th>岗位名称</th>
+            <th>薪资</th>
+            <th>工作地点</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for job in stars.result %}
+            <tr>
+                <td>{{ job["id"] }}</td>
+                <td>{{ job.name }}</td>
+                <td>{{ job.salary_low }} - {{ job.salary_high }} </td>
+                <td>{{ job.city }}</td>
+                <td><a href="/person/detail/{{ job["id"] }}/" class="ax-col ax-col-8"><i
+                                                class="ax-color-primary">投递</i></a></td>
+            <td>                                        <a  onclick="handle_star({{ job['id'] }})" class="ax-btn ax-sm" style='text-align: center'><span class="ax-iconfont ax-icon-star" id="star_btn">取消</span></a></td>
+            </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+                  <div class="ax-pagination">
+                    <a class="ax-total">共{{ stars.total_record }}条</a>
+                    <a href="{{ stars.prev_url }}" class="ax-prev">上一页</a>
+                    {% for i in range(1, stars.total_page + 1) %}
+                        <a {% print('class="ax-active"') if i == stars.current_page %}
+                                href="?page_size={{ stars.page_size }}&current_page={{ i }}">
+                            {{ i }}</a>
+                    {% endfor %}
+                    <a href="{{ stars.next_url }}" class="ax-next">下一页</a>
+                </div>
+
+
+    </div>
+
+    <div class="ax-flex-block-1">
+        <section class="demo-section-border"></section>
+    </div>
+
+</div>
+
+<script src="/static/js/ax.min.js" type="text/javascript"></script>
+<script>
+function handle_star(id) {
+    axAjax.withCredentials = true
+    axAjax({
+        url: `/star/${id}/`,
+        success: ()=> {
+            window.location.reload();
+        },
+        type: 'POST'
+    })
+}
+
+
+</script>
+</body>
+</html>
+

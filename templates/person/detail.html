@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>岗位信息</title>
+    <link href="/static/css/ax.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/ax-response.css" rel="stylesheet" type="text/css">
+    <script src="/static/js/ax.min.js" type="text/javascript"></script>
+
+</head>
+<body>
+{% include "components/nav.html" %}
+
+<div class="ax-flex-row ax-split">
+    <div class="ax-flex-block-1">
+        <section class="demo-section-border"></section>
+    </div>
+    <div class="ax-flex-block-5">
+
+        <div class="ax-box ax-border ax-radius">
+            <div class="ax-box-header ax-row">
+                <div class="ax-col">
+                    <div style="display: flex; align-items: center">
+                        <span class="ax-title" style="margin-right: 30px">{{ job.name }}</span> <a
+                            onclick="handle_star({{ job['id'] }})" class="ax-btn ax-sm" style='text-align: center'><span
+                            class="ax-iconfont ax-icon-star"
+                            id="star_btn">{{ job['star_id'] | star_status_for_job_cut }}</span></a>
+                        {#                        <button id="submit_bio" class="ax-btn ax-primary ax-sm" onclick="showBioShowDialog()">投递简历#}
+                        {#                        </button>#}
+                    </div>
+                    {{ job.city }} {{ job.salary_low }}k
+                    - {{ job.salary_high }}k {{ job.degree|degree_cut }} {{ job.experience | expr_cut }}
+                </div>
+
+            </div>
+            <div class="ax-break-line"></div>
+            <div class="ax-box-body ax-article">
+                {{ job.desc.replace('\n', '<br />') | safe }}
+            </div>
+        </div>
+
+<div class="ax-break"></div>
+
+
+
+
+        <div class="ax-panel ax-border ax-radius">
+    <div class="ax-panel-header">简历上传</div>
+    <div class="ax-break-line"></div>
+    <div class="ax-panel-body ax-article">
+
+        {% if bio_records %}
+    <li><i class="ax-ace ax-ace-success"></i> 您之前已投递过此岗位了</li>
+{% else %}
+    <div class="ax-form-group">
+            <div class="ax-flex-row">
+                <div class="ax-col">
+                    <input type="hidden" id="upload_bio">
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+
+
+    </div>
+</div>
+
+
+
+
+    </div>
+    <div class="ax-flex-block-1">
+        <section class="demo-section-border">
+
+        </section>
+    </div>
+</div>
+<div>
+
+</div>
+
+
+<script>
+    {% set person_id = session["login_person"]["id"] %}
+    let axup = new axUpload('#upload_bio', {
+        type: "text",
+        url: "/person/bio/upload/{{ person_id }}/{{ job.id }}/",
+        action: "manual",
+        uploadBtn: {show: true},
+        clearBtn: {show: true},
+        max: 1,
+        accept: "pdf,doc,docx"
+    })
+
+    axup.on('completed', function (obj) {
+           window.location.reload();
+    });
+
+
+    function handle_star(id) {
+        axAjax.withCredentials = true
+        axAjax({
+            url: `/star/${id}/`,
+            success: () => {
+                window.location.reload();
+            },
+            type: 'POST'
+        })
+    }
+
+
+</script>
+</body>
+</html>
