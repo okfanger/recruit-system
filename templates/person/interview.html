@@ -6,6 +6,7 @@
     <link href="/static/css/ax.css" rel="stylesheet" type="text/css">
     <link href="/static/css/ax-response.css" rel="stylesheet" type="text/css">
 
+<script src="/static/js/ax.min.js" type="text/javascript"></script>
 </head>
 <body>
 
@@ -41,10 +42,13 @@
             <td>{{ record['update_time'] }}</td>
             <td>
                 {% if record['status'] == 1 %}
-                    <a onclick="accept({{ record['id'] }})" class="ax-btn ax-primary ax-ripple ax-sm">接受</a> &nbsp;
-                <a onclick="reject({{ record['id'] }})"  class="ax-btn ax-danger ax-ripple ax-sm">拒绝</a></td>
+                <button data-k="{{ record['id'] }}" class="ax-btn ax-ripple ax-sm dig">查看面试邀请内容</button> &nbsp;
+
+                    <button onclick="accept({{ record['id'] }})" class="ax-btn ax-primary ax-ripple ax-sm">接受</button> &nbsp;
+                <button onclick="reject({{ record['id'] }})"  class="ax-btn ax-danger ax-ripple ax-sm">拒绝</button></td>
 
                 {% endif %}
+
             </tr>
     {% endfor %}
     </tbody>
@@ -59,9 +63,28 @@
 
 </div>
 
-<script src="/static/js/ax.min.js" type="text/javascript"></script>
-<script>
+<div id="ajax"></div>
 
+
+<script>
+    const doms = document.querySelectorAll(".dig")
+    for (const item of doms) {
+        const k = item.attributes['data-k'].value
+        item.onclick = function () {
+            new axDialog({
+                url:'/person/interview/check/'+k,
+                type:"async",
+                content:function(res){
+
+                    const {interview_title, interview_content} = res;
+                    return `<div class="ax-dialog-content">
+                        <div class="ax-dialog-title">${interview_title}</div>
+                        <div class="ax-dialog-body">${interview_content}</div>
+                    </div>`
+                }
+            }).show();
+        }
+    }
     function accept(id) {
         axAjax({
             url: '/person/interview/accept/'+id,
@@ -81,7 +104,6 @@
             }
         });
     }
-
 </script>
 </body>
 </html>

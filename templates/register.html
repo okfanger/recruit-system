@@ -46,7 +46,25 @@
 
 <body>
 <div class="custom-main">
-    <form action="/register" method="POST">
+
+    <div class="ax-tab" axTab>
+    <div class="ax-flex-row">
+
+                <div class="ax-form-label">角色</div>
+
+                <div class="ax-form-con">
+                    <div class="ax-form-input">
+                    <span class="ax-btn-group ax-tab-nav" style="width: 100%;display: flex;justify-content: left">
+            <a href="###" class="ax-btn">应聘者</a><a href="###" class="ax-btn">HR</a></span>
+
+                     </div>
+                </div>
+            </div>
+           <ul class="ax-tab-content">
+        <li>
+        <div class="ax-break"></div>
+
+                <form action="/register/person" method="POST">
 
         <div class="ax-form-group">
             <div class="ax-flex-row">
@@ -91,24 +109,248 @@
             </div>
         </div>
         <div class="ax-break-md"></div>
+      <div class="ax-form-group">
+            <div class="ax-flex-row">
+                <div class="ax-form-label">姓名</div>
 
-        <div class="ax-form-group">
-                        <div class="ax-flex-row" style="justify-content: center">
-
-        <label class="ax-radio">
-            <input name="role" value="person" type="radio">
-            <span>我是应聘者</span>
-        </label>
-
-        <label class="ax-radio">
-            <input name="role" value="hr" type="radio">
-            <span>我是HR</span>
-        </label>
+                <div class="ax-form-con">
+                    <div class="ax-form-input">
+                        <input name="name" type="text"> <span class="ax-pos-right">
+                        <a href="###" class="ax-iconfont ax-icon-close ax-val-none"></a></span>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <div class="ax-break-md"></div>
+
+                          <div class="ax-form-group">
+                           <div class="ax-flex-row">
+        <div class="ax-form-label">性别</div>
+        <div class="ax-form-con">
+            <div class="ax-form-input">
+                <select name="degree" >
+                    {% for i in get_gender_list() %}
+                    <option value="{{ loop.index - 1 }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+                  </div>
+      <div class="ax-break-md"></div>
+              <div class="ax-form-group">
+            <div class="ax-flex-row">
+                <div class="ax-form-label">电话</div>
+
+                <div class="ax-form-con">
+                    <div class="ax-form-input">
+                        <input name="telephone" type="text"> <span class="ax-pos-right">
+                        <a href="###" class="ax-iconfont ax-icon-close ax-val-none"></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                  <div class="ax-break"></div>
+
+                          <div class="ax-form-group">
+            <div class="ax-flex-row">
+                <div class="ax-form-label">邮箱</div>
+
+                <div class="ax-form-con">
+                    <div class="ax-form-input">
+                        <input name="email" type="text"> <span class="ax-pos-right">
+                        <a href="###" class="ax-iconfont ax-icon-close ax-val-none"></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+                <div class="ax-break-md"></div>
+              <div class="ax-form-group">
+            <div class="ax-flex-row">
+                <div class="ax-form-label">学校</div>
+
+                <div class="ax-form-con">
+                    <div class="ax-form-input">
+                        <input name="school" type="text"> <span class="ax-pos-right">
+                        <a href="###" class="ax-iconfont ax-icon-close ax-val-none"></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                <div class="ax-break-md"></div>
+
+                                          <div class="ax-form-group">
+                           <div class="ax-flex-row">
+        <div class="ax-form-label">学历</div>
+        <div class="ax-form-con">
+            <div class="ax-form-input">
+                <select name="degree" >
+                    {% for i in get_degree_list() %}
+                    <option value="{{ loop.index - 1 }}">{{ i.replace('不限', '未知') }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+                                          </div>
+                <div class="ax-break"></div>
+              <div class="ax-flex-row">
+                   <div class="ax-form-label"></div>
+                  <div class="ax-form-con">
+                  <button type="submit" class="ax-btn ax-btn-primary ax-btn-block">注册</button>
+                  </div>
+                  </div>
         <div></div>
 
     </form>
+
+        </li>
+        <li>
+        <div class="ax-break"></div>
+
+              <form action="/register/hr" method="POST">
+
+        <div class="ax-form-group">
+            <div class="ax-flex-row">
+
+                <div class="ax-form-label">用户名</div>
+
+                <div class="ax-form-con">
+                    <div class="ax-form-input">
+                        <input type="text" name="username"> <span class="ax-pos-right">
+                        <a href="###" class="ax-iconfont ax-icon-close ax-val-none"></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ax-break-md"></div>
+
+        <div class="ax-form-group">
+            <div class="ax-flex-row">
+                <div class="ax-form-label">密码</div>
+
+                <div class="ax-form-con">
+                    <div class="ax-form-input">
+                        <input name="password" type="password"> <span class="ax-pos-right">
+                        <a href="###" class="ax-iconfont ax-icon-close ax-val-none"></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ax-break-md"></div>
+
+        <div class="ax-form-group">
+            <div class="ax-flex-row">
+                <div class="ax-form-label">确认密码</div>
+
+                <div class="ax-form-con">
+                    <div class="ax-form-input">
+                        <input name="confirmPassword" type="password"> <span class="ax-pos-right">
+                        <a href="###" class="ax-iconfont ax-icon-close ax-val-none"></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ax-break-md"></div>
+        <div class="ax-form-group">
+            <div class="ax-flex-row">
+                <div class="ax-form-label">姓名</div>
+
+                <div class="ax-form-con">
+                    <div class="ax-form-input">
+                        <input name="name" type="text"> <span class="ax-pos-right">
+                        <a href="###" class="ax-iconfont ax-icon-close ax-val-none"></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ax-break-md"></div>
+                  <div class="ax-form-group">
+                           <div class="ax-flex-row">
+        <div class="ax-form-label">性别</div>
+        <div class="ax-form-con">
+            <div class="ax-form-input">
+                <select name="degree" >
+                    {% for i in get_gender_list() %}
+                    <option value="{{ loop.index - 1 }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+                  </div>
+                  <div class="ax-break-md"></div>
+                          <div class="ax-form-group">
+            <div class="ax-flex-row">
+                <div class="ax-form-label">公司</div>
+
+                <div class="ax-form-con">
+                    <div class="ax-form-input">
+                        <input name="company" type="text"> <span class="ax-pos-right">
+                        <a href="###" class="ax-iconfont ax-icon-close ax-val-none"></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      <div class="ax-break-md"></div>
+              <div class="ax-form-group">
+            <div class="ax-flex-row">
+                <div class="ax-form-label">电话</div>
+
+                <div class="ax-form-con">
+                    <div class="ax-form-input">
+                        <input name="telephone" type="text"> <span class="ax-pos-right">
+                        <a href="###" class="ax-iconfont ax-icon-close ax-val-none"></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                  <div class="ax-break"></div>
+
+                          <div class="ax-form-group">
+            <div class="ax-flex-row">
+                <div class="ax-form-label">邮箱</div>
+
+                <div class="ax-form-con">
+                    <div class="ax-form-input">
+                        <input name="email" type="text"> <span class="ax-pos-right">
+                        <a href="###" class="ax-iconfont ax-icon-close ax-val-none"></a></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<div class="ax-break"></div>
+              <div class="ax-flex-row">
+                   <div class="ax-form-label"></div>
+                  <div class="ax-form-con">
+                  <button type="submit" class="ax-btn ax-btn-primary ax-btn-block">注册</button>
+                  </div>
+                  </div>
+        <div>
+
+
+        </div>
+
+
+    </form>
+
+
+        </li>
+    </ul>
+    </div>
+
+
+
+
 </div>
 <!--正文结束-->
 

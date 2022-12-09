@@ -5,15 +5,12 @@ from flask import Flask, render_template, url_for, send_from_directory, send_fil
 from flask import request, session, redirect
 from database import MysqlPool
 
-
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = 'media'
 DB = MysqlPool()
-ctx=app.app_context()
+ctx = app.app_context()
 ctx.push()
-
-
 
 
 # 云边书房
@@ -26,7 +23,7 @@ def before():
         return
     if url in white_urls:
         return
-    prev_url = ['/person/bio/upload/', '/uploads/']
+    prev_url = ['/person/bio/upload/', '/uploads/', '/register/hr', '/register/person']
     for prev in prev_url:
         if url.startswith(prev):
             return
@@ -68,6 +65,55 @@ def login_html():
 def register_html():
     return render_template("register.html")
 
+@app.route('/register/<role>', methods=["POST"])
+def register(role):
+
+    global school, degree
+    try:
+        username = request.form.get("username")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirmPassword")
+        name = request.form.get("name")
+        gender = request.form.get("gender")
+        telephone = request.form.get("telephone")
+        email = request.form.get("email")
+        if role == "person":
+            school = request.form.get("school")
+            degree = request.form.get("degree")
+
+        if password != confirm_password:
+            raise Exception("两次密码不一致")
+
+        exist_person = DB.fetch_one("""
+        select * from person where username = %s
+        """, (username,))
+
+        exist_hr = DB.fetch_one("""
+        select * from hr where username = %s
+        """, (username,))
+        if exist_person is not None or exist_hr is not None:
+            raise Exception("用户名已存在")
+
+        if role == "person":
+            DB.insert("""
+            insert into `person` (`username`, `password`, `name`, `gender`, `telephone`, `email`, `school`, `degree`)
+            values (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (username, password, name, gender, telephone, email, school, degree))
+        else:
+            DB.insert("""
+            insert into `hr` (`username`, `password`, `name`, `gender`, `telephone`, `email`)
+            values (%s, %s, %s, %s, %s, %s)
+            """, (username, password, name, gender, telephone, email))
+
+        return redirect(url_for('login_html'))
+
+    except Exception as e:
+        return render_template("register.html", **{
+            "msg": e
+        })
+
+
+
 
 @app.route('/logout')
 def logout():
@@ -87,7 +133,6 @@ def index_html():
 
 @app.route("/hr/index")
 def hr_index():
-
     jobs = DB.fetch_all("""
     select * from job 
     order by id desc
@@ -99,6 +144,7 @@ def hr_index():
         "jobs": jobs,
         "hr_id": session.get("login_person").get("id")
     })
+
 
 @app.route("/hr/job_record/<int:job_id>", methods=["GET", "POST"])
 def hr_job_record(job_id):
@@ -120,6 +166,7 @@ def hr_job_record(job_id):
             "job_records": job_records,
             "job": job
         })
+
 
 @app.route("/hr/job_edit/<int:job_id>", methods=["GET", "POST"])
 def hr_job_edit(job_id):
@@ -156,12 +203,14 @@ def hr_job_edit(job_id):
                 "job": job
             })
 
+
 @app.route('/hr/job/status_change/<int:job_id>', methods=["POST"])
 def hr_job_status_change(job_id):
     DB.update("""
     update job set is_done = abs(is_done-1)  where id = %s
     """, (job_id,))
     return "success"
+
 
 @app.route("/hr/publish", methods=['GET', 'POST'])
 def hr_publish_job():
@@ -193,7 +242,8 @@ def hr_publish_job():
                 "type": "danger"
             })
 
-@app.route('/hr/send_interview/<int:record_id>', methods=["GET","POST"])
+
+@app.route('/hr/send_interview/<int:record_id>', methods=["GET", "POST"])
 def hr_send_interview(record_id):
     if request.method == "GET":
 
@@ -207,7 +257,6 @@ def hr_send_interview(record_id):
         person = DB.fetch_one("""
         select * from person where id = %s
         """, (record.get("person_id"),))
-
 
         return render_template("hr/send_interview.html", **{
             "record": record,
@@ -233,7 +282,6 @@ def hr_send_interview(record_id):
         return redirect(url_for("hr_job_record", job_id=record.get("job_id")))
 
 
-
 @app.route('/hr/my_job')
 def hr_my_job():
     my_jobs = DB.fetch_all("""
@@ -246,17 +294,17 @@ def hr_my_job():
     current_page = int(request.args.get('current_page', 1))
     my_jobs = DB.pagination(my_jobs, page_size, current_page)
 
-
     return render_template("hr/my_job.html", **{
         "my_jobs": my_jobs
     })
+
 
 @app.route('/hr/detail/<int:job_id>/')
 def hr_detail(job_id):
     job = DB.fetch_one("""
     select * from job
     where id = %r
-    """, (job_id, ))
+    """, (job_id,))
 
     if job is None:
         return redirect(code=404, location=url_for('index_html'))
@@ -274,6 +322,8 @@ def hr_detail(job_id):
         "job": job,
         "records": records
     })
+
+
 @app.route('/person/index')
 def person_index():
     jobs = DB.fetch_all("""
@@ -312,11 +362,13 @@ def person_star():
         "stars": stars
     })
 
+
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     af_filename = request.args.get('af_filename', filename)
     return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename,as_attachment=True, attachment_filename=af_filename)
+                               filename, as_attachment=True, attachment_filename=af_filename)
+
 
 @app.route('/person/bio/upload/<int:person_id>/<int:job_id>/', methods=["POST"])
 def person_bio_upload(job_id, person_id):
@@ -334,6 +386,7 @@ def person_bio_upload(job_id, person_id):
         "valid": True
     }
 
+
 @app.route('/person/interview/accept/<int:record_id>', methods=["POST"])
 def person_interview_accept(record_id):
     DB.update("""
@@ -342,6 +395,7 @@ def person_interview_accept(record_id):
 
     return "success"
 
+
 @app.route('/person/interview/reject/<int:record_id>', methods=["POST"])
 def person_interview_reject(record_id):
     DB.update("""
@@ -349,6 +403,16 @@ def person_interview_reject(record_id):
     """, (record_id,))
 
     return "success"
+
+
+@app.route('/person/interview/check/<int:record_id>', methods=["GET", "POST"])
+def person_interview_check(record_id):
+    record = DB.fetch_one("""
+    select * from bio_record where id = %r
+    """, (record_id,))
+    return record
+
+
 @app.route('/person/interview')
 def person_interview():
     records = DB.fetch_all("""
@@ -361,6 +425,7 @@ def person_interview():
     return render_template("person/interview.html", **{
         "records": records
     })
+
 
 @app.route('/person/detail/<int:job_id>/')
 def person_detail(job_id):
@@ -376,7 +441,6 @@ def person_detail(job_id):
     select * from bio_record
     where job_id = %r and person_id = %r
     """, (job_id, session["login_person"]["id"]))
-
 
     # job = DB.fetch_one("select * from job where id = %r", (int(job_id),))
     if job is None:
@@ -395,22 +459,30 @@ def route_active_cut(url):
     else:
         return ""
 
+
 degree_list = ['不限', '初中及以下', '中专', '高中', '大专', '本科', '硕士研究生', '博士研究生']
 expr_list = ['不限', '在校生', '应届生', '1年以内', '1-3年', '3-5年', '5-10年']
-bio_record_list = ['未处理', 'hr已发送面试', '应聘者拒绝面试', '应聘者接受面试', 'hr已发送offer',\
-'应聘者拒绝offer', '应聘者接受offer', 'hr已发送入职', '应聘者拒绝入职', '应聘者接受入职']
+bio_record_list = ['未处理', 'hr已发送面试', '应聘者拒绝面试', '应聘者接受面试', 'hr已发送offer', \
+                   '应聘者拒绝offer', '应聘者接受offer', 'hr已发送入职', '应聘者拒绝入职', '应聘者接受入职']
+gender_list = ['男', '女']
 
 @app.template_global('get_bio_record_list')
 def get_bio_record_list():
     return bio_record_list
 
+@app.template_global('get_gender_list')
+def get_gender_list():
+    return gender_list
+
 @app.template_global('get_degree_list')
 def get_degree_list():
     return degree_list
 
+
 @app.template_global('get_expr_list')
 def get_expr_list():
     return expr_list
+
 
 @app.template_global('url_filename_func')
 def url_filename_cut(url, download_name):
@@ -432,6 +504,7 @@ def degree_cut(value):
     value = int(value)
     return degree_list[value] if value <= len(degree_list) else 'None'
 
+
 @app.template_filter('gender_cut')
 def get_gender_cut(value):
     value = int(value)
@@ -441,6 +514,8 @@ def get_gender_cut(value):
         return "女"
     else:
         return "不限"
+
+
 @app.template_filter('expr_cut')
 def expr_cut(value):
     value = int(value)
@@ -453,6 +528,8 @@ def star_status_for_job_cut(value):
         return "收藏"
     else:
         return "已收藏"
+
+
 @app.template_filter('job_is_done_cut')
 def job_is_done_cut(value):
     value = int(value)

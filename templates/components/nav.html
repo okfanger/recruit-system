@@ -1,3 +1,7 @@
+<head>
+        <link href="/static/css/main.css" rel="stylesheet" type="text/css">
+
+</head>
 {% set uri = request.url_rule %}
 {% set login_role = session.get("login_role") %}
 {% if login_role == 'person' %}
@@ -14,7 +18,7 @@
     {'name': '发布岗位', 'path': '/hr/publish'},
 ] %}
 {% endif %}
-<div class="ax-tab" axTab>
+<div class="ax-tab" style="background: white; margin-bottom: 20px" axTab>
     <div class="ax-tab-nav ax-menu-tab">
 
     {% for route in routes %}
