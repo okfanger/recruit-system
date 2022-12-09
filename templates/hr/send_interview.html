@@ -22,8 +22,35 @@
         <section class="demo-section-border"></section>
     </div>
     <div class="ax-flex-block-5">
-    <div  style="display: flex;justify-content: center">
-        您现在要给 用户
+    <div  style="display: flex;justify-content: center; flex-wrap: inherit">
+
+        <div class="ax-form-group">
+        <div style="text-align: center">您现在要给 用户 {{ person.id }} 发送面试邀请</div>
+<form action="/hr/send_interview/{{ record.id }}" method="post" >
+<div class="ax-flex-row">
+<div class="ax-form-label">标题</div>
+<div class="ax-form-con">
+<div class="ax-form-input"><input type="text" name="title"></div>
+</div>
+</div>
+
+
+            <div class="ax-flex-row">
+<div class="ax-form-label">面试内容</div>
+<div class="ax-flex-block">
+<div class="ax-form-input"><textarea name="content" cols="" rows="" placeholder=""></textarea></div>
+
+<div class="ax-flex-row">
+    <div class="ax-form-input"><button type="submit" class="ax-btn ax-primary ax-full">发送</button></div>
+
+</div>
+</div>
+</div>
+</form>
+</div>
+
+
+
     </div></div>
     <div class="ax-flex-block-1">
         <section class="demo-section-border">

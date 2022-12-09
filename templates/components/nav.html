@@ -2,6 +2,7 @@
 {% set login_role = session.get("login_role") %}
 {% if login_role == 'person' %}
 {% set routes = [
+    {'name': '投递 & 面试', 'path': '/person/interview'},
     {'name': '岗位圈', 'path': '/person/index'},
     {'name': '收藏夹', 'path': '/person/star'},
 ] %}

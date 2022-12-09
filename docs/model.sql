@@ -59,7 +59,9 @@ create table if not exists `bio_record`
     `url` varchar(1024) not null comment '简历pdf地址',
     `job_id` int not null comment '岗位ID',
     `status` int null comment '状态(0-未处理, 1-已处理)' DEFAULT 0,
+    `interview_content` text null comment '面试内容',
+    `interview_title` varchar(256) null comment '面试邮件',
     `create_time` datetime not null comment '创建时间' default CURRENT_TIMESTAMP,
-    `update_time` datetime not null comment '更新时间' default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-)
+    `update_time` datetime not null comment '更新时间' default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+);
 

@@ -47,14 +47,16 @@
             <td>{{ record['update_time'] }}</td>
             <td>
                 <a href="{{ url_filename_func(record.url, record['name'])}}" class="ax-btn ax-info ax-ripple ax-sm">下载简历</a>
-                <a class="ax-btn ax-primary ax-ripple ax-sm">发送面试</a>
+
+                {% if record['status'] == 0 %}
+                <a href="/hr/send_interview/{{ record.id }}" class="ax-btn ax-primary ax-ripple ax-sm">发送面试</a>
+                {% endif %}
             </td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
     </div>
-
 
     <div class="ax-flex-block-1">
         <section class="demo-section-border"></section>

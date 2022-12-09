@@ -4,7 +4,7 @@ import time
 from flask import Flask, render_template, url_for, send_from_directory, send_file
 from flask import request, session, redirect
 from database import MysqlPool
-from flask import g
+
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -12,6 +12,11 @@ app.config['UPLOAD_FOLDER'] = 'media'
 DB = MysqlPool()
 ctx=app.app_context()
 ctx.push()
+
+
+
+
+# 云边书房
 
 @app.before_request
 def before():
@@ -188,11 +193,45 @@ def hr_publish_job():
                 "type": "danger"
             })
 
-@app.route('/hr/send_interview/<int:record_id>')
+@app.route('/hr/send_interview/<int:record_id>', methods=["GET","POST"])
 def hr_send_interview(record_id):
-    return render_template("hr/send_interview.html", **{
-        "record_id": record_id
-    })
+    if request.method == "GET":
+
+        before_status = DB.fetch_one("""
+        select status from bio_record where id = %r
+        """, record_id)['status']
+
+        record = DB.fetch_one("""
+        select * from bio_record where id = %s
+        """, (record_id,))
+        person = DB.fetch_one("""
+        select * from person where id = %s
+        """, (record.get("person_id"),))
+
+
+        return render_template("hr/send_interview.html", **{
+            "record": record,
+            "person": person
+        })
+    else:
+        title = request.form.get("title")
+        content = request.form.get("content")
+        before_status = DB.fetch_one("""
+        select status from bio_record where id = %r
+        """, record_id)['status']
+
+        record = DB.fetch_one("""
+        select * from bio_record where id = %s
+        """, (record_id,))
+
+        after_status = 1
+
+        DB.update("""
+        update bio_record set `interview_title` = %s, `interview_content` = %s, `status` = %r where id = %r
+        """, (title, content, after_status, record_id))
+
+        return redirect(url_for("hr_job_record", job_id=record.get("job_id")))
+
 
 
 @app.route('/hr/my_job')
@@ -245,6 +284,7 @@ def person_index():
     where job.is_done = 1
     order by job.id desc
     """, (session["login_person"]["id"],))
+
     page_size = int(request.args.get('page_size', 9))
     current_page = int(request.args.get('current_page', 1))
     jobs = DB.pagination(jobs, page_size, current_page)
@@ -294,6 +334,33 @@ def person_bio_upload(job_id, person_id):
         "valid": True
     }
 
+@app.route('/person/interview/accept/<int:record_id>', methods=["POST"])
+def person_interview_accept(record_id):
+    DB.update("""
+    update bio_record set status = 3 where id = %r
+    """, (record_id,))
+
+    return "success"
+
+@app.route('/person/interview/reject/<int:record_id>', methods=["POST"])
+def person_interview_reject(record_id):
+    DB.update("""
+    update bio_record set status = 2 where id = %r
+    """, (record_id,))
+
+    return "success"
+@app.route('/person/interview')
+def person_interview():
+    records = DB.fetch_all("""
+    select bio_record.*, job.* from bio_record
+    left join job
+    on bio_record.job_id = job.id
+    where bio_record.person_id = %r
+    """, (session["login_person"]["id"],))
+
+    return render_template("person/interview.html", **{
+        "records": records
+    })
 
 @app.route('/person/detail/<int:job_id>/')
 def person_detail(job_id):
@@ -309,7 +376,6 @@ def person_detail(job_id):
     select * from bio_record
     where job_id = %r and person_id = %r
     """, (job_id, session["login_person"]["id"]))
-
 
 
     # job = DB.fetch_one("select * from job where id = %r", (int(job_id),))

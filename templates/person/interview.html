@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/static/css/ax.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/ax-response.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+
+{% include 'components/nav.html' %}
+<div class="ax-flex-row ax-split">
+    <div class="ax-flex-block-1">
+        <section class="demo-section-border"></section>
+    </div>
+
+    <div class="ax-flex-block-5">
+<table class="ax-table" hover>
+    <thead>
+        <tr>
+            <th>序号</th>
+            <th>岗位名称</th>
+            <th>薪资</th>
+            <th>工作地点</th>
+            <th>状态</th>
+            <th>最近一次修改时间</th>
+            <th></th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in records %}
+            <tr>
+                <td>{{ record["id"] }}</td>
+                <td><a href="/person/detail/{{ record["id"] }}/">{{ record.name }}</a></td>
+                <td>{{ record.salary_low }} - {{ record.salary_high }} </td>
+                <td>{{ record.city }}</td>
+
+            <td>{{ record['status'] | bio_record_cut }}</td>
+            <td>{{ record['update_time'] }}</td>
+            <td>
+                {% if record['status'] == 1 %}
+                    <a onclick="accept({{ record['id'] }})" class="ax-btn ax-primary ax-ripple ax-sm">接受</a> &nbsp;
+                <a onclick="reject({{ record['id'] }})"  class="ax-btn ax-danger ax-ripple ax-sm">拒绝</a></td>
+
+                {% endif %}
+            </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+    </div>
+
+    <div class="ax-flex-block-1">
+        <section class="demo-section-border"></section>
+    </div>
+
+</div>
+
+<script src="/static/js/ax.min.js" type="text/javascript"></script>
+<script>
+
+    function accept(id) {
+        axAjax({
+            url: '/person/interview/accept/'+id,
+            type: 'post',
+            success: function (data) {
+                window.location.reload();
+            }
+        });
+    }
+
+    function reject(id) {
+        axAjax({
+            url: '/person/interview/reject/'+id,
+            type: 'post',
+            success: function (data) {
+                window.location.reload();
+            }
+        });
+    }
+
+</script>
+</body>
+</html>
+
