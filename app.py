@@ -1,15 +1,17 @@
 import os
 import time
 
-from flask import Flask, render_template, url_for, send_from_directory
+from flask import Flask, render_template, url_for, send_from_directory, send_file
 from flask import request, session, redirect
 from database import MysqlPool
+from flask import g
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = 'media'
 DB = MysqlPool()
-
+ctx=app.app_context()
+ctx.push()
 
 @app.before_request
 def before():
@@ -19,7 +21,7 @@ def before():
         return
     if url in white_urls:
         return
-    prev_url = ['/person/bio/upload/']
+    prev_url = ['/person/bio/upload/', '/uploads/']
     for prev in prev_url:
         if url.startswith(prev):
             return
@@ -78,6 +80,161 @@ def index_html():
         return redirect(url_for('person_index'))
 
 
+@app.route("/hr/index")
+def hr_index():
+
+    jobs = DB.fetch_all("""
+    select * from job 
+    order by id desc
+    """, None)
+    page_size = int(request.args.get('page_size', 9))
+    current_page = int(request.args.get('current_page', 1))
+    jobs = DB.pagination(jobs, page_size, current_page)
+    return render_template("hr/index.html", **{
+        "jobs": jobs,
+        "hr_id": session.get("login_person").get("id")
+    })
+
+@app.route("/hr/job_record/<int:job_id>", methods=["GET", "POST"])
+def hr_job_record(job_id):
+    if request.method == "GET":
+        job_records = DB.fetch_all("""
+        select bio_record.*, person.* from bio_record 
+        left join person on bio_record.person_id = person.id
+        where job_id = %s
+        order by bio_record.id desc
+        """, (job_id,))
+
+        # print(job_records)
+
+        job = DB.fetch_one("""
+        select * from job where id = %s
+        """, (job_id,))
+
+        return render_template("hr/job_record.html", **{
+            "job_records": job_records,
+            "job": job
+        })
+
+@app.route("/hr/job_edit/<int:job_id>", methods=["GET", "POST"])
+def hr_job_edit(job_id):
+    if request.method == "GET":
+        job = DB.fetch_one("select * from job where id = %s", (job_id,))
+        return render_template("hr/job_edit.html", **{
+            "job": job
+        })
+    else:
+        try:
+            hr_id = session.get("login_person").get("id")
+            name = request.form.get("name")
+            desc = request.form.get("desc")
+            city = request.form.get("city")
+            degree = request.form.get("degree")
+            salary_low = request.form.get("salary_low")
+            salary_high = request.form.get("salary_high")
+
+            DB.update("update job set `name` = %s, `desc` = %s, `city` = %s, `degree` = %s, `salary_low` = %s, "
+                      "`salary_high` = %s where id = %s", (name, desc, city, degree, salary_low, salary_high, job_id))
+            job = DB.fetch_one("select * from job where id = %s", (job_id,))
+
+            return render_template("hr/job_edit.html", **{
+                "type": "success",
+                "msg": "修改成功",
+                "job": job
+            })
+        except Exception as e:
+            job = DB.fetch_one("select * from job where id = %s", (job_id,))
+
+            return render_template("hr/job_edit.html", **{
+                "type": "danger",
+                "msg": "参数错误",
+                "job": job
+            })
+
+@app.route('/hr/job/status_change/<int:job_id>', methods=["POST"])
+def hr_job_status_change(job_id):
+    DB.update("""
+    update job set is_done = abs(is_done-1)  where id = %s
+    """, (job_id,))
+    return "success"
+
+@app.route("/hr/publish", methods=['GET', 'POST'])
+def hr_publish_job():
+    if request.method == "GET":
+        return render_template("hr/publish.html")
+    else:
+        try:
+            name = f'{request.form.get("name")}'
+            salary_low = float(request.form.get("salary_low"))
+            salary_high = float(request.form.get("salary_high"))
+            city = f'{request.form.get("city")}'
+            experience = int(request.form.get("experience"))
+            degree = int(request.form.get("degree"))
+            desc = f'{request.form.get("desc")}'
+            hr_id = int(session.get("login_person").get("id"))
+
+            DB.insert("""
+                 insert into job (`name`, `salary_low`, `salary_high`, `city`, `experience`, `degree`, `desc`, `hr_id`)
+                 values (%s, %r, %r, %s, %r, %r, %s, %r)
+                 """, (name, salary_low, salary_high, city, experience, degree, desc, hr_id))
+            return render_template("hr/publish.html", **{
+                "msg": "发布成功",
+                "type": "success"
+            })
+
+        except Exception as e:
+            return render_template("hr/publish.html", **{
+                "msg": "参数错误",
+                "type": "danger"
+            })
+
+@app.route('/hr/send_interview/<int:record_id>')
+def hr_send_interview(record_id):
+    return render_template("hr/send_interview.html", **{
+        "record_id": record_id
+    })
+
+
+@app.route('/hr/my_job')
+def hr_my_job():
+    my_jobs = DB.fetch_all("""
+    select * from job
+    where hr_id = %s
+    order by id desc
+    """, (session.get("login_person").get("id"),))
+
+    page_size = int(request.args.get('page_size', 9))
+    current_page = int(request.args.get('current_page', 1))
+    my_jobs = DB.pagination(my_jobs, page_size, current_page)
+
+
+    return render_template("hr/my_job.html", **{
+        "my_jobs": my_jobs
+    })
+
+@app.route('/hr/detail/<int:job_id>/')
+def hr_detail(job_id):
+    job = DB.fetch_one("""
+    select * from job
+    where id = %r
+    """, (job_id, ))
+
+    if job is None:
+        return redirect(code=404, location=url_for('index_html'))
+
+    person_id = session.get("login_person").get("id")
+    if person_id == job.get("hr_id"):
+        records = DB.fetch_all("""
+        select * from bio_record
+        where job_id = %r
+        """, (job_id))
+    else:
+        records = []
+
+    return render_template("hr/detail.html", **{
+        "job": job,
+        "records": records
+    })
 @app.route('/person/index')
 def person_index():
     jobs = DB.fetch_all("""
@@ -85,13 +242,13 @@ def person_index():
     left join `recruit-system`.star
     on job.id = star.job_id
     and star.person_id = %s
+    where job.is_done = 1
     order by job.id desc
     """, (session["login_person"]["id"],))
     page_size = int(request.args.get('page_size', 9))
     current_page = int(request.args.get('current_page', 1))
     jobs = DB.pagination(jobs, page_size, current_page)
 
-    print(jobs)
     return render_template("person/index.html", **{
         "jobs": jobs
     })
@@ -117,8 +274,9 @@ def person_star():
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
+    af_filename = request.args.get('af_filename', filename)
     return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename)
+                               filename,as_attachment=True, attachment_filename=af_filename)
 
 @app.route('/person/bio/upload/<int:person_id>/<int:job_id>/', methods=["POST"])
 def person_bio_upload(job_id, person_id):
@@ -171,17 +329,56 @@ def route_active_cut(url):
     else:
         return ""
 
+degree_list = ['不限', '初中及以下', '中专', '高中', '大专', '本科', '硕士研究生', '博士研究生']
+expr_list = ['不限', '在校生', '应届生', '1年以内', '1-3年', '3-5年', '5-10年']
+bio_record_list = ['未处理', 'hr已发送面试', '应聘者拒绝面试', '应聘者接受面试', 'hr已发送offer',\
+'应聘者拒绝offer', '应聘者接受offer', 'hr已发送入职', '应聘者拒绝入职', '应聘者接受入职']
+
+@app.template_global('get_bio_record_list')
+def get_bio_record_list():
+    return bio_record_list
+
+@app.template_global('get_degree_list')
+def get_degree_list():
+    return degree_list
+
+@app.template_global('get_expr_list')
+def get_expr_list():
+    return expr_list
+
+@app.template_global('url_filename_func')
+def url_filename_cut(url, download_name):
+    filename = url.split("/")[-1]
+    suffix = filename.split(".")[-1]
+    # 获取当前时间戳
+    timestamp = str(int(time.time()))
+    return f'{url}?af_filename={download_name}-{timestamp}.{suffix}'
+
+
+@app.template_filter('bio_record_cut')
+def bio_record_cut(value):
+    value = int(value)
+    return bio_record_list[value] if value <= len(bio_record_list) else 'None'
+
 
 @app.template_filter('degree_cut')
 def degree_cut(value):
-    format_list = ['不限', '初中及以下', '中专', '高中', '大专', '本科', '硕士研究生', '博士研究生']
-    return format_list[value] if value <= len(format_list) else 'None'
+    value = int(value)
+    return degree_list[value] if value <= len(degree_list) else 'None'
 
-
+@app.template_filter('gender_cut')
+def get_gender_cut(value):
+    value = int(value)
+    if value == 0:
+        return "男"
+    elif value == 1:
+        return "女"
+    else:
+        return "不限"
 @app.template_filter('expr_cut')
 def expr_cut(value):
-    format_list = ['不限', '在校生', '应届生', '1年以内', '1-3年', '3-5年', '5-10年']
-    return format_list[value] if value <= len(format_list) else 'None'
+    value = int(value)
+    return expr_list[value] if value <= len(expr_list) else 'None'
 
 
 @app.template_filter('star_status_for_job_cut')
@@ -190,6 +387,13 @@ def star_status_for_job_cut(value):
         return "收藏"
     else:
         return "已收藏"
+@app.template_filter('job_is_done_cut')
+def job_is_done_cut(value):
+    value = int(value)
+    if value == 1:
+        return "checked"
+    else:
+        return " "
 
 
 @app.route('/star/<int:job_id>/', methods=['post'])

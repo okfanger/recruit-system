@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>发布职位</title>
+    <link href="/static/css/ax.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/ax-response.css" rel="stylesheet" type="text/css">
+    <style>
+
+
+        .ax-form-group .ax-flex-row {
+            margin: 20px 0;
+        }
+
+    </style>
+</head>
+<body>
+{% include "components/nav.html" %}
+
+<div class="ax-flex-row ax-split">
+    <div class="ax-flex-block-1">
+        <section class="demo-section-border"></section>
+    </div>
+    <div class="ax-flex-block-5">
+    <div  style="display: flex;justify-content: center">
+<form action="/hr/publish" method="post">
+    <div class="ax-form-group">
+    {% if type in ["success", "danger"] %}
+    <div class="ax-alert ax-{{ type }}" style="text-align: center">{{ msg }}</div>
+{% endif %}
+        <div class="ax-flex-row">
+            <div class="ax-form-label">岗位名</div>
+            <div class="ax-form-con">
+                <div class="ax-form-input">
+                    <input name="name" type="text"><span class="ax-pos-right">
+                    <a href="###" class="ax-iconfont ax-icon-close ax-val-none">
+
+                    </a>
+                </span>
+                </div>
+            </div>
+        </div>
+                <div class="ax-flex-row">
+            <div class="ax-form-label">城市</div>
+            <div class="ax-form-con">
+                <div class="ax-form-input">
+                    <input name="city" type="text"><span class="ax-pos-right">
+                    <a href="###" class="ax-iconfont ax-icon-close ax-val-none">
+
+                    </a>
+                </span>
+                </div>
+            </div>
+        </div>
+
+     <div class="ax-flex-row">
+        <div class="ax-form-label">最低学历要求</div>
+        <div class="ax-form-con">
+            <div class="ax-form-input">
+                <select name="degree" >
+                    {% for i in get_degree_list() %}
+                    <option value="{{ loop.index - 1 }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+         <div class="ax-flex-row">
+        <div class="ax-form-label">工作经验要求</div>
+        <div class="ax-form-con">
+            <div class="ax-form-input">
+                <select  name="experience" >
+                    {% for i in get_expr_list() %}
+                    <option value="{{ loop.index - 1  }}">{{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="ax-flex-row">
+        <div class="ax-form-label">薪资范围</div>
+        <div class="ax-form-con">
+            <div class="ax-form-input" style="display: flex; flex-direction: row">
+                <div class="ax-amount" axAmount>
+                    <input name="salary_low" placeholder="请输入..." type="text">
+                </div>
+                <div style="width: 20px;text-align: center;align-items: center;display: flex;padding: 0 20px">至</div>
+               <div class="ax-amount" axAmount>
+                    <input name="salary_high" placeholder="请输入..." type="text">
+                </div>
+            </div>
+        </div>
+    </div>
+  <div class="ax-flex-row">
+            <div class="ax-form-label">简介：</div>
+            <div class="ax-form-con">
+                <div class="ax-form-input">
+                    <textarea  name="desc" placeholder="请输入..."></textarea>
+                </div>
+            </div>
+        </div>
+
+   <div class="ax-flex-row">
+            <div class="ax-form-label"></div>
+            <div class="ax-form-con">
+                <div class="ax-form-input">
+                    <input type="submit" value="提交" class="ax-btn ax-primary">
+                    <input type="reset" value="重置" class="ax-btn">
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+</form></div></div>
+    <div class="ax-flex-block-1">
+        <section class="demo-section-border">
+
+        </section>
+    </div>
+</div>
+
+
+<script src="/static/js/ax.min.js" type="text/javascript">
+
+
+
+</script>
+
+</body>
+</html>

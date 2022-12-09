@@ -37,9 +37,10 @@ create table if not exists `job`
 `city` varchar(64) null comment '所在城市',
 `salary_low` float null comment '最低工资，单位K',
 `salary_high` float null comment '最高工资，单位K',
-`is_done` int null comment '是否在招',
+`is_done` int null comment '是否在招' DEFAULT 1,
 `degree` int null comment '学历要求',
-`experience` int null comment '工作经验要求'
+`experience` int null comment '工作经验要求',
+`hr_id` int null comment 'HR id'
 ) comment '工作表';
 
 -- star表
@@ -57,6 +58,8 @@ create table if not exists `bio_record`
     `person_id` int not null comment '用户ID',
     `url` varchar(1024) not null comment '简历pdf地址',
     `job_id` int not null comment '岗位ID',
+    `status` int null comment '状态(0-未处理, 1-已处理)' DEFAULT 0,
     `create_time` datetime not null comment '创建时间' default CURRENT_TIMESTAMP,
-    `update_time` datetime not null comment '更新时间' default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP
+    `update_time` datetime not null comment '更新时间' default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
 )
+

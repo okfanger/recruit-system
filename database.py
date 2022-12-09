@@ -82,4 +82,11 @@ class MysqlPool(object):
         self.connect_close(conn, cursor)
         return row
 
+    def update(self, sql, args):
+        conn, cursor = self.connect()
+        row = cursor.execute(sql, args)
+        conn.commit()
+        self.connect_close(conn, cursor)
+        return row
+
 

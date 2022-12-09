@@ -5,17 +5,24 @@
     {'name': '岗位圈', 'path': '/person/index'},
     {'name': '收藏夹', 'path': '/person/star'},
 ] %}
+{% endif %}
+{% if login_role == 'hr' %}
+{% set routes = [
+    {'name': '我的岗位', 'path': '/hr/my_job'},
+    {'name': '岗位圈', 'path': '/hr/index'},
+    {'name': '发布岗位', 'path': '/hr/publish'},
+] %}
+{% endif %}
 <div class="ax-tab" axTab>
     <div class="ax-tab-nav ax-menu-tab">
 
     {% for route in routes %}
         <a href="{{ route['path'] }}" class="ax-item {{ route['path'] | route_active_cut }}"><span class="tab_title">{{ route['name'] }}</span></a>
     {% endfor %}
+
+    <span class="ax-item" style="height: 100%;line-height: 100%;vertical-align: baseline;"><a href="/logout" type="button" class="ax-btn ax-sm  ax-warning ax-shadow" style="">登出</a></span>
+
+
         </div>
 
 </div>
-{% endif %}
-
-{% if login_role == 'hr' %}
-
-{% endif %}

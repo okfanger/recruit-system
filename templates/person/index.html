@@ -36,9 +36,9 @@
                                         {% endif %}
                                         <a  onclick="handle_star({{ item['id'] }})" class="ax-btn ax-sm" style='text-align: center'><span class="ax-iconfont ax-icon-star" id="star_btn">{{ item['star_id'] | star_status_for_job_cut }}</span></a>
                                         <div class="ax-col ax-col-16 ax-align-left">{{ item["city"] }}, {{ item["salary_low"] }}K-{{ item["salary_high"] }}K</div>
-                                        <span class="ax-gutter-line"></span>
-                                        <a href="/person/detail/{{ item["id"] }}/" class="ax-col ax-col-8"><i
-                                                class="ax-color-primary">立即投递</i></a>
+{#                                        <span class="ax-gutter-line"></span>#}
+{#                                        <a href="/person/detail/{{ item["id"] }}/" class="ax-col ax-col-8"><i#}
+{#                                                class="ax-color-primary">查看详情</i></a>#}
                                     </div>
                                 </div>
 
