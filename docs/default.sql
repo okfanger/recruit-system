@@ -131,6 +131,6 @@ values  (1, 'hr', '12345', '王小刚', 0, '字节跳动', '10086', 'hr@bytedanc
         (4, 'hr4', '12345', '刘大娘', 1, '农大食堂', '16666', 'hr@imau.edu.cn');
 
 insert into `person` (id, username, password, name, gender, school, degree, telephone, email)
-values  (1, 'person1', '12345', '张三', 0, '清华大学', '本科', '10086', 'p1@imau.edu.cn'),
-        (2, 'person2', '12345', '李四', 1, '北京大学', '硕士', '10010', 'p2@imau.edu.cn'),
-        (3, 'person3', '12345', '王五', 0, '复旦大学', '博士', '10099', 'p3@imau.edu.cn');
+values  (1, 'person1', '12345', '张三', 0, '清华大学', 2, '10086', 'p1@imau.edu.cn'),
+        (2, 'person2', '12345', '李四', 1, '北京大学', 3, '10010', 'p2@imau.edu.cn'),
+        (3, 'person3', '12345', '王五', 0, '复旦大学', 4, '10099', 'p3@imau.edu.cn');

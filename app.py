@@ -12,6 +12,8 @@ DB = MysqlPool()
 ctx = app.app_context()
 ctx.push()
 
+if os.path.exists(app.config['UPLOAD_FOLDER']) is False:
+    os.mkdir(app.config['UPLOAD_FOLDER'])
 
 # 云边书房
 
