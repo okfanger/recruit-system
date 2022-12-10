@@ -369,7 +369,7 @@ def person_star():
 def uploaded_file(filename):
     af_filename = request.args.get('af_filename', filename)
     return send_from_directory(app.config['UPLOAD_FOLDER'],
-                               filename, as_attachment=True, attachment_filename=af_filename)
+                               filename, as_attachment=True, download_name=af_filename)
 
 
 @app.route('/person/bio/upload/<int:person_id>/<int:job_id>/', methods=["POST"])
